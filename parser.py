@@ -2,13 +2,13 @@ from __future__ import annotations
 from collections import namedtuple
 from enum import Enum, auto
 from math import floor
-from typing import List
+from typing import List, OrderedDict
 
 from bitstruct import unpack
 
 
 PacketParameter = namedtuple("PacketParameter", [
-    "identifier", "width", "type", "value"
+    "width", "type", "value"
 ])
 
 
@@ -51,142 +51,109 @@ class FS9721Unit(Enum):
     CELSIUS = auto()
 
 
-_PACKET_SPEC = [
-    PacketParameter(
-        identifier="ac", width=1,
-        type=PacketParameterType.FLAG, value=FS9721Flag.AC
-    ),
-    PacketParameter(
-        identifier="dc", width=1,
-        type=PacketParameterType.FLAG, value=FS9721Flag.DC
-    ),
-    PacketParameter(
-        identifier="auto", width=1,
-        type=PacketParameterType.FLAG, value=FS9721Flag.AUTO
-    ),
-    PacketParameter(
-        identifier="rs232", width=1,
-        type=PacketParameterType.FLAG, value=FS9721Flag.CONNECTED
-    ),
-    PacketParameter(
-        identifier="negative", width=1,
-        type=PacketParameterType.VALUE, value=None
-    ),
-    PacketParameter(
-        identifier="digit1", width=7,
-        type=PacketParameterType.VALUE, value=None
-    ),
-    PacketParameter(
-        identifier="dp1", width=1,
-        type=PacketParameterType.VALUE, value=None
-    ),
-    PacketParameter(
-        identifier="digit2", width=7,
-        type=PacketParameterType.VALUE, value=None
-    ),
-    PacketParameter(
-        identifier="dp2", width=1,
-        type=PacketParameterType.VALUE, value=None
-    ),
-    PacketParameter(
-        identifier="digit3", width=7,
-        type=PacketParameterType.VALUE, value=None
-    ),
-    PacketParameter(
-        identifier="dp3", width=1,
-        type=PacketParameterType.VALUE, value=None
-    ),
-    PacketParameter(
-        identifier="digit4", width=7,
-        type=PacketParameterType.VALUE, value=None
-    ),
-    PacketParameter(
-        identifier="micro", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Flag.AC
-    ),
-    PacketParameter(
-        identifier="nano", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Flag.DC
-    ),
-    PacketParameter(
-        identifier="kilo", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Flag.AUTO
-    ),
-    PacketParameter(
-        identifier="diode", width=1,
-        type=PacketParameterType.FLAG, value=FS9721Flag.DIODE
-    ),
-    PacketParameter(
-        identifier="milli", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Unit.MILLI
-    ),
-    PacketParameter(
-        identifier="percent", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Unit.PERCENT
-    ),
-    PacketParameter(
-        identifier="mega", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Unit.MEGA
-    ),
-    PacketParameter(
-        identifier="continuity", width=1,
-        type=PacketParameterType.FLAG, value=FS9721Flag.CONTINUITY
-    ),
-    PacketParameter(
-        identifier="capacitance", width=1,
-        type=PacketParameterType.FLAG, value=FS9721Flag.CAPACITANCE
-    ),
-    PacketParameter(
-        identifier="ohm", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Unit.OHM
-    ),
-    PacketParameter(
-        identifier="relative", width=1,
-        type=PacketParameterType.FLAG, value=FS9721Flag.RELATIVE
-    ),
-    PacketParameter(
-        identifier="hold", width=1,
-        type=PacketParameterType.VALUE, value=FS9721Flag.HOLD
-    ),
-    PacketParameter(
-        identifier="amp", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Unit.AMP
-    ),
-    PacketParameter(
-        identifier="volts", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Unit.VOLT
-    ),
-    PacketParameter(
-        identifier="hertz", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Unit.HERTZ
-    ),
-    PacketParameter(
-        identifier="low_battery", width=1,
-        type=PacketParameterType.VALUE, value=FS9721Flag.LOW_BATTERY
-    ),
-    PacketParameter(
-        identifier="minimum", width=1,
-        type=PacketParameterType.VALUE, value=FS9721Flag.MINIMUM
-    ),
-    PacketParameter(
-        identifier="celsius", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Unit.CELSIUS
-    ),
-    PacketParameter(
-        identifier="fahrenheight", width=1,
-        type=PacketParameterType.UNIT, value=FS9721Unit.FAHRENHEIGHT
-    ),
-    PacketParameter(
-        identifier="maximum", width=1,
-        type=PacketParameterType.VALUE, value=FS9721Flag.MAXIMUM
-    ),
-]
+_PACKET_SPEC = OrderedDict()
+_PACKET_SPEC["ac"] = PacketParameter(
+    type=PacketParameterType.FLAG, value=FS9721Flag.AC, width=1
+)
+_PACKET_SPEC["dc"] = PacketParameter(
+    type=PacketParameterType.FLAG, value=FS9721Flag.DC, width=1
+)
+_PACKET_SPEC["auto"] = PacketParameter(
+    type=PacketParameterType.FLAG, value=FS9721Flag.AUTO, width=1
+)
+_PACKET_SPEC["connected"] = PacketParameter(
+    type=PacketParameterType.FLAG, value=FS9721Flag.CONNECTED, width=1
+)
+_PACKET_SPEC["negative"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=None, width=1
+)
+_PACKET_SPEC["digit1"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=None, width=7
+)
+_PACKET_SPEC["dp1"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=None, width=1
+)
+_PACKET_SPEC["digit2"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=None, width=7
+)
+_PACKET_SPEC["dp2"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=None, width=1
+)
+_PACKET_SPEC["digit3"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=None, width=7
+)
+_PACKET_SPEC["dp3"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=None, width=1
+)
+_PACKET_SPEC["digit4"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=None, width=7
+)
+_PACKET_SPEC["micro"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.MICRO, width=1
+)
+_PACKET_SPEC["nano"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.NANO, width=1
+)
+_PACKET_SPEC["kilo"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.KILO, width=1
+)
+_PACKET_SPEC["diode"] = PacketParameter(
+    type=PacketParameterType.FLAG, value=FS9721Flag.DIODE, width=1
+)
+_PACKET_SPEC["milli"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.MILLI, width=1
+)
+_PACKET_SPEC["percent"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.PERCENT, width=1
+)
+_PACKET_SPEC["mega"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.MEGA, width=1
+)
+_PACKET_SPEC["continuity"] = PacketParameter(
+    type=PacketParameterType.FLAG, value=FS9721Flag.CONTINUITY, width=1
+)
+_PACKET_SPEC["capacitance"] = PacketParameter(
+    type=PacketParameterType.FLAG, value=FS9721Flag.CAPACITANCE, width=1
+)
+_PACKET_SPEC["ohm"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.OHM, width=1
+)
+_PACKET_SPEC["relative"] = PacketParameter(
+    type=PacketParameterType.FLAG, value=FS9721Flag.RELATIVE, width=1
+)
+_PACKET_SPEC["hold"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=FS9721Flag.HOLD, width=1
+)
+_PACKET_SPEC["amp"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.AMP, width=1
+)
+_PACKET_SPEC["volts"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.VOLT, width=1
+)
+_PACKET_SPEC["hertz"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.HERTZ, width=1
+)
+_PACKET_SPEC["low_battery"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=FS9721Flag.LOW_BATTERY, width=1
+)
+_PACKET_SPEC["minimum"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=FS9721Flag.MINIMUM, width=1
+)
+_PACKET_SPEC["celsius"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.CELSIUS, width=1
+)
+_PACKET_SPEC["fahrenheight"] = PacketParameter(
+    type=PacketParameterType.UNIT, value=FS9721Unit.FAHRENHEIGHT, width=1
+)
+_PACKET_SPEC["maximum"] = PacketParameter(
+    type=PacketParameterType.VALUE, value=FS9721Flag.MAXIMUM, width=1
+)
 
 
-_PACKET_PARSE_STR = ''.join(f"u{p.width}" for p in _PACKET_SPEC)
+_PACKET_PARSE_STR = ''.join([f"u{p.width}" for p in _PACKET_SPEC.values()])
 
 
-ParsedFlags = namedtuple("ParsedFlags", [p.identifier for p in _PACKET_SPEC])
+ParsedFlags = namedtuple("ParsedFlags", _PACKET_SPEC.keys())
 
 
 class InvalidPacketError(Exception):
@@ -200,7 +167,7 @@ class FS9721:
     """
     def __init__(self, packet: bytearray):
         if len(packet) != 14:
-            raise InvalidPacketError("invalid payload: incorrect length")
+            raise InvalidPacketError(f"invalid payload: incorrect length ({len(packet)} bytes)")
         
         packet_data = bytearray(7)
         for idx, byte in enumerate(packet):
@@ -244,15 +211,15 @@ class FS9721:
         return float(self.display())
     
     def units(self) -> List[str]:
-        def has_unit(param: PacketParameter):
+        def has_unit(ident: str, param: PacketParameter):
             is_unit = (param.type == PacketParameterType.UNIT)
-            return is_unit and (getattr(self.state, param.identifier))
+            return is_unit and (getattr(self.state, ident))
         
-        return [u.value for u in _PACKET_SPEC if has_unit(u)]
+        return [p.value for i, p in _PACKET_SPEC.items() if has_unit(i, p)]
 
     def flags(self) -> List[FS9721Flag]:
-        def has_flag(param: PacketParameter):
+        def has_flag(ident: str, param: PacketParameter):
             is_flag = (param.type == PacketParameterType.FLAG)
-            return is_flag and (getattr(self.state, param.identifier)) 
+            return is_flag and (getattr(self.state, ident)) 
         
-        return [f.value for f in _PACKET_SPEC if has_flag(f)]
+        return [p.value for i, p in _PACKET_SPEC.items() if has_flag(i, p)]

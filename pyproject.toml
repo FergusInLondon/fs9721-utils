@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pyblemultimeter"
+name = "fs9721-utils"
 version = "0.0.1"
 description = ""
 authors = ["Fergus In London <fergus@fergus.london>"]
