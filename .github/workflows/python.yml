@@ -21,7 +21,7 @@ jobs:
         poetry-version: ${{ matrix.poetry-version }}
     - name: Analysing the code with pylint
       run: |
-        pylint ./fs9721_utils 
+        poetry run pylint ./fs9721_utils
     - name: Run tests
       run: |
         poetry run test

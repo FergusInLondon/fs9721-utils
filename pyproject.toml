@@ -8,10 +8,10 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.9"
 bitstruct = "^8.12.1"
-pylint = "^2.12.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
+pylint = "^2.12.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
