@@ -1,13 +1,14 @@
 [tool.poetry]
 name = "fs9721-utils"
 version = "0.0.1"
-description = ""
+description = "Python based utilities for interacting with digital multimeters that are built on the FS9721-LP3 chipset."
 authors = ["Fergus In London <fergus@fergus.london>"]
-license = "bleak"
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
 bitstruct = "^8.12.1"
+pylint = "^2.12.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
@@ -15,3 +16,6 @@ pytest = "^6.2.5"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+test = 'test:run'

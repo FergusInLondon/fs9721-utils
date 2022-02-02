@@ -1,6 +1,6 @@
 import unittest
 
-from parser import FS9721, FS9721Flag, FS9721Unit
+from fs9721_utils.parser import FS9721, FS9721Flag, FS9721Unit
 
 
 class TestPacketParsing(unittest.TestCase):
@@ -50,7 +50,3 @@ class TestPacketParsing(unittest.TestCase):
             flags = meter.flags()
             assert len(flags) == len(test["flags"])
             assert all([f in flags for f in test["flags"]])
-
-
-if __name__ == '__main__':
-    unittest.main()

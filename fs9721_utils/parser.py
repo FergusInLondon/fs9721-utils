@@ -168,7 +168,7 @@ class FS9721:
     def __init__(self, packet: bytearray):
         if len(packet) != 14:
             raise InvalidPacketError(f"invalid payload: incorrect length ({len(packet)} bytes)")
-        
+
         packet_data = bytearray(7)
         for idx, byte in enumerate(packet):
             # MSB 4 bits are a counter
@@ -183,11 +183,11 @@ class FS9721:
                 mask = mask << 4
 
             packet_data[floor(idx/2)] |= mask
-        
+
         self.state = ParsedFlags(
             *(unpack(_PACKET_PARSE_STR, packet_data))
         )
-    
+
     def display(self) -> str:
         char_map = {
             0x7D: "0", 0x05: "1", 0x5B: "2", 0x1F: "3", 0x27: "4", 0x3E: "5",
@@ -196,12 +196,12 @@ class FS9721:
 
         def parse_digit(val):
             return char_map.get(val, "")
-        
+
         def parse_dp(val):
             return "." if val else ""
-        
+
         return ''.join([
-            "-" if self.state.negative else "", parse_digit(self.state.digit1), 
+            "-" if self.state.negative else "", parse_digit(self.state.digit1),
             parse_dp(self.state.dp1), parse_digit(self.state.digit2),
             parse_dp(self.state.dp2), parse_digit(self.state.digit3),
             parse_dp(self.state.dp3), parse_digit(self.state.digit4)
@@ -209,17 +209,17 @@ class FS9721:
 
     def value(self) -> float:
         return float(self.display())
-    
+
     def units(self) -> List[str]:
         def has_unit(ident: str, param: PacketParameter):
             is_unit = (param.type == PacketParameterType.UNIT)
             return is_unit and (getattr(self.state, ident))
-        
+
         return [p.value for i, p in _PACKET_SPEC.items() if has_unit(i, p)]
 
     def flags(self) -> List[FS9721Flag]:
         def has_flag(ident: str, param: PacketParameter):
             is_flag = (param.type == PacketParameterType.FLAG)
-            return is_flag and (getattr(self.state, ident)) 
-        
+            return is_flag and (getattr(self.state, ident))
+
         return [p.value for i, p in _PACKET_SPEC.items() if has_flag(i, p)]
