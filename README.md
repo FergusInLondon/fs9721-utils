@@ -1,4 +1,5 @@
-# FS9721-LP3 Digital Multimedia Utilities
+# FS9721-LP3 Digital Multimedia Utilities ![Build Status](https://github.com/FergusInLondon/fs9721-utils/actions/workflows/python.yml/badge.svg)
+
 
 It's just a parser and some unit tests.
 
