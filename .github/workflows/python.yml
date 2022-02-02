@@ -24,7 +24,7 @@ jobs:
         poetry install
     - name: Analysing the code with pylint
       run: |
-        poetry run pylint ./fs9721_utils
+        poetry run pylint ./fs9721_utils --rcfile=.pylint
     - name: Run tests
       run: |
         poetry run test
