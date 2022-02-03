@@ -1,9 +1,29 @@
 import unittest
+from random import shuffle
 
-from fs9721_utils.parser import FS9721, Flag, Unit
+from fs9721 import Reading, Flag, Unit
+from fs9721.reading import InvalidPacketError
 
 
 class TestPacketParsing(unittest.TestCase):
+
+    def test_raises_for_malformed_packet(self):
+        for p in [
+            # too short
+            [0x17, 0x27, 0x3D, 0x47, 0x5D, 0x65, 0x7B, 0x89, 0x97, 0xA0],
+            # too long
+            [0x17, 0x27, 0x3D, 0x47, 0x5D, 0x65, 0x7B, 0x89, 0x97, 0xA0, 0xB8, 0xC0, 0xD4, 0xE1, 0xF2],
+            # duplicate indices
+            [0x17, 0x27, 0x3D, 0x37, 0x5D, 0x65, 0x7B, 0x89, 0x97, 0xA0, 0xB8, 0xC0, 0xD4, 0xE1]
+        ]:
+            got_exception = False
+
+            try:
+                Reading(p)
+            except InvalidPacketError:
+                got_exception = True
+
+            assert got_exception
 
     def test_parse_flags(self):
         cases = [
@@ -40,7 +60,36 @@ class TestPacketParsing(unittest.TestCase):
         ]
 
         for test in cases:
-            meter = FS9721(test["sample"])
+            meter = Reading(test["sample"])
+            assert test["display"] == meter.display()
+
+            units = meter.units()
+            assert len(units) == len(test["units"])
+            assert all([u in units for u in test["units"]])
+
+            flags = meter.flags()
+            assert len(flags) == len(test["flags"])
+            assert all([f in flags for f in test["flags"]])
+
+    def test_parse_unordered_flags(self):
+        cases = [
+            {
+                "sample": [0x17, 0x27, 0x3D, 0x47, 0x5D, 0x65, 0x7B, 0x89, 0x97, 0xA0, 0xB8, 0xC0, 0xD4, 0xE1],
+                "units": [Unit.MILLI, Unit.VOLT],
+                "flags": [Flag.DC, Flag.AUTO, Flag.CONNECTED],
+                "display": "002."
+            },
+            {
+                "sample": [0x15, 0x27, 0x3D, 0x47, 0x5D, 0x67, 0x7D, 0x87, 0x9E, 0xA0, 0xB0, 0xC0, 0xD0, 0xE4],
+                "units": [Unit.CELSIUS],
+                "flags": [Flag.DC, Flag.CONNECTED],
+                "display": "0006"
+            },
+        ]
+
+        for test in cases:
+            shuffle(test["sample"])
+            meter = Reading(test["sample"])
             assert test["display"] == meter.display()
 
             units = meter.units()
