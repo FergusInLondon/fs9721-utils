@@ -1,7 +1,7 @@
 import unittest
 
-from fs9721 import Reading
-from fs9721.reading import InvalidPacketError
+from fs9721_utils import Reading
+from fs9721_utils.reading import InvalidPacketError
 
 from .cases import _MALFORMED, valid_expectations
 

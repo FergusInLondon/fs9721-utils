@@ -1,5 +1,5 @@
 from random import shuffle
-from fs9721 import Flag, Unit
+from fs9721_utils import Flag, Unit
 
 _MALFORMED = [
     # too short

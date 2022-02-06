@@ -1,0 +1,7 @@
+[run]
+branch = True
+
+source =
+    fs9721_utils/
+
+omit = */__init__.py
