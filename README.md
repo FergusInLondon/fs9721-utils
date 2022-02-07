@@ -1,4 +1,4 @@
-# FS9721-LP3 Digital Multimeter Utilities ![Build Status](https://github.com/FergusInLondon/fs9721-utils/actions/workflows/python.yml/badge.svg)[![PyPI version](https://badge.fury.io/py/fs9721-utils.svg)](https://badge.fury.io/py/fs9721-utils)
+# FS9721-LP3 Digital Multimeter Utilities <br/> ![Build Status](https://github.com/FergusInLondon/fs9721-utils/actions/workflows/python.yml/badge.svg) [![CodeFactor](https://www.codefactor.io/repository/github/fergusinlondon/fs9721-utils/badge)](https://www.codefactor.io/repository/github/fergusinlondon/fs9721-utils) [![PyPI version](https://badge.fury.io/py/fs9721-utils.svg)](https://badge.fury.io/py/fs9721-utils)
 
 
 It's just a parser and some unit tests.
