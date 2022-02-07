@@ -1,0 +1,7 @@
+site_name: fs9721_utils
+
+theme:
+  name: "material"
+
+plugins:
+- mkdocstrings
