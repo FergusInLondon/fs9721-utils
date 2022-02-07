@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fs9721-utils"
-version = "0.0.1"
+version = "0.0.2"
 description = "Python based utilities for interacting with digital multimeters that are built on the FS9721-LP3 chipset."
 authors = ["Fergus In London <fergus@fergus.london>"]
 license = "MIT"
