@@ -115,6 +115,24 @@ multimeter_reading* parse_packet(uint8_t *data) {
     return packet;
 }
 
+char lookup_digit(uint8_t segments) {
+    switch segments {
+        case 0x7D: return "0";
+        case 0x05: return "1";
+        case 0x5B: return "2";
+        case 0x1F: return "3";
+        case 0x27: return "4";
+        case 0x3E: return "5";
+        case 0x7E: return "6";
+        case 0x15: return "7";
+        case 0x7F: return "8";
+        case 0x3F: return "9";
+        case 0x68: return "L";
+        default:
+            return "";
+    }
+}
+
 
 void print_bytes(uint8_t *bytes, int len) {
     for (int i = 0; i < len; i++) {

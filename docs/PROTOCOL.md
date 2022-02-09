@@ -101,7 +101,25 @@ typedef union {
 
 Note that the segments of the LCD used for digits are contained within continuous 7-bit regions of this structure, and follow a standard way of representing seven segment displays. This allows them to be mapped with ease:
 
-    Map
+```c
+char lookup_digit(uint8_t segments) {
+    switch segments {
+        case 0x7D: return "0";
+        case 0x05: return "1";
+        case 0x5B: return "2";
+        case 0x1F: return "3";
+        case 0x27: return "4";
+        case 0x3E: return "5";
+        case 0x7E: return "6";
+        case 0x15: return "7";
+        case 0x7F: return "8";
+        case 0x3F: return "9";
+        case 0x68: return "L";
+        default:
+            return "";
+    }
+}
+```
 
 ## Example Parser
 
