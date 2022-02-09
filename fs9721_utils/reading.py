@@ -3,6 +3,8 @@ The reading module contains all the logic required to parse and understand a
 reading that has been received by a FS9721-based device.
 """
 from __future__ import annotations
+
+import logging
 from collections import namedtuple
 from enum import Enum, auto
 from math import floor
@@ -10,6 +12,7 @@ from typing import List, OrderedDict
 
 from bitstruct import unpack
 
+_LOGGER = logging.getLogger("fs9721")
 
 _PacketParameter = namedtuple("_PacketParameter", [
     "width", "type", "value"
@@ -79,6 +82,7 @@ def readable_unit(units: List[Unit], with_prefixes=True) -> str:
             parts[1] = symbol
             continue
 
+    _LOGGER.debug("got parts for units", extra={"units": units, "parts": parts})
     return ''.join([p for p in parts if p])
 
 
@@ -92,8 +96,12 @@ def readable_raw_value(units: List[Unit], val: float) -> float:
     for unit in units:
         multiplier = unit_multiplier.get(unit)
         if multiplier:
+            _LOGGER.debug("transformed value", extra={"val": val, "units": units})
             return val * multiplier
 
+    _LOGGER.debug("no transformation required for value", extra={
+        "val": val, "units": units
+    })
     return val
 
 
@@ -227,6 +235,9 @@ class Reading:
     """
     def __init__(self, packet: bytearray):
         if len(packet) != 14:
+            _LOGGER.error("invalid packet: incorrect length", extra={
+                "length": len(packet), "data": packet
+            })
             raise InvalidPacketError(f"invalid payload: incorrect length ({len(packet)} bytes)")
 
         seen = [False for _ in range(0, 14)]
@@ -236,6 +247,9 @@ class Reading:
             # MSB 4 bits are used to index the byte; with a value between 0x01 and 0x014
             byte_idx = (byte >> 4)
             if (not 14 >= byte_idx >= 1) or seen[(byte_idx-1)]:
+                _LOGGER.error("packet invalid: validation of counter failed", extra={
+                    "data": packet
+                })
                 raise InvalidPacketError(f"invalid or duplicate byte index recieved: {byte_idx}")
 
             # Revert to "normal" 0-based indexing now the byte index has been
@@ -254,11 +268,22 @@ class Reading:
             packet_data[floor(idx/2)] |= byte
 
         if not all(seen):
+            _LOGGER.error("packet invalid: duplicate bytes", extra={
+                "data": packet, "seen": seen
+            })
             raise InvalidPacketError("duplicate bytes present in the packet")
+
+        _LOGGER.debug("parsed packet structure from raw packet data", extra={
+            "raw": packet, "parsed": packet_data
+        })
 
         self.state = _PacketParams(
             *(unpack(_PACKET_PARSE_STR, packet_data))
         )
+
+        _LOGGER.info("parsed parameters and reading from inbound packet", extra={
+            "readings": self.state
+        })
 
     def display(self) -> str:
         """Returns a string representation of the reading from the devices LCD."""
@@ -273,12 +298,15 @@ class Reading:
         def parse_dp(val):
             return "." if val else ""
 
-        return ''.join([
+        display = ''.join([
             "-" if self.state.negative else "", parse_digit(self.state.digit1),
             parse_dp(self.state.dp1), parse_digit(self.state.digit2),
             parse_dp(self.state.dp2), parse_digit(self.state.digit3),
             parse_dp(self.state.dp3), parse_digit(self.state.digit4)
         ])
+
+        _LOGGER.debug("parsed display reading", extra={"display": display})
+        return display
 
     def value(self) -> float:
         """
@@ -288,6 +316,7 @@ class Reading:
         try:
             return float(self.display())
         except ValueError as value_err:
+            _LOGGER.debug("attempted to cast multimeter value to float: not numeric!")
             msg = f"{self.display()} is not a numeric reading - no suitable value"
             raise NonNumericReadingError(msg) from value_err
 
