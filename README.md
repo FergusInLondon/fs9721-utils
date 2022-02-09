@@ -1,7 +1,7 @@
 # FS9721-LP3 Digital Multimeter Utilities <br/> ![Build Status](https://github.com/FergusInLondon/fs9721-utils/actions/workflows/python.yml/badge.svg) [![CodeFactor](https://www.codefactor.io/repository/github/fergusinlondon/fs9721-utils/badge)](https://www.codefactor.io/repository/github/fergusinlondon/fs9721-utils) [![PyPI version](https://badge.fury.io/py/fs9721-utils.svg)](https://badge.fury.io/py/fs9721-utils)
 
 
-It's just a parser and some unit tests.
+It's just a parser, a csv logger, and some unit tests.
 
 ## Usage
 
@@ -20,3 +20,11 @@ Type "help", "copyright", "credits" or "license" for more information.
 '010.9'
 >>> exit()
 ```
+
+## Notes
+
+**Feb 2022: v0.0.3 enables parsing of packets from the FS9721 device, and logging (to CSV) of the data contained in those packets. After Bluetooth discovery and connection management, docs, and some minor clean-up, this will be stable enough for tagging as v1.**
+
+# License
+
+This repository and the code contained wherein is licensed under the MIT License - see [LICENSE.md](LICENSE.md).
