@@ -5,6 +5,7 @@ from sys import exit, stdout
 from coverage import Coverage
 
 from .parser_test import TestPacketParsing
+from .csv_test import TestCSVLogging
 
 @contextmanager
 def coverage():
