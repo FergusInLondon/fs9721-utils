@@ -12,6 +12,8 @@ bitstruct = "^8.12.1"
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
 pylint = "^2.12.2"
+coverage = "^6.3.1"
+freezegun = "^1.1.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
