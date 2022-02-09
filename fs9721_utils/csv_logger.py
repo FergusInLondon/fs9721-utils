@@ -3,18 +3,21 @@ This module is responsible for writing data from the multimeter to a CSV file,
 it's a very simplistic wrapper around the `csv.writer` object - and performs
 some basic transformation logic.
 """
+import logging
+
 from collections import namedtuple
 from csv import writer
 from datetime import datetime
 from typing import Optional, Union
 
-
 from fs9721_utils.reading import NonNumericReadingError, Reading, readable_unit
 
 
-_LOG_COLUMNS = ["time", "value", "unit"]
+_LOGGER = logging.getLogger("fs9721")
 
-CSVRow = namedtuple("CSVRow", _LOG_COLUMNS)
+_CSV_COLUMNS = ["time", "value", "unit"]
+
+CSVRow = namedtuple("CSVRow", _CSV_COLUMNS)
 
 Loggable = Union[CSVRow, Reading]
 
@@ -32,7 +35,7 @@ def _parse_reading(reading: Reading) -> CSVRow:
     )
 
 
-class CSVWriterNotReady(Exception):
+class CSVWriterNotReadyError(Exception):
     """
     CSVWriterNotReady is thrown when there's an attempt to write a row to the
     CSV file but the CSV file has already been closed. CSVWriter will not
@@ -58,9 +61,10 @@ class CSVWriter:
         self._open()
 
     def _open(self):
+        _LOGGER.info("opening CSV file for writing",extra={"filename": self.filename})
         self.output = open(self.filename, "a") # pylint: disable=consider-using-with,unspecified-encoding
         self.csv = writer(self.output)
-        self.csv.writerow(_LOG_COLUMNS)
+        self.csv.writerow(_CSV_COLUMNS)
         self.writing = True
 
     def log_value(self, value, unit):
@@ -70,18 +74,22 @@ class CSVWriter:
     def log(self, entry: Loggable):
         """logs out a `Loggable` type - either a `CSVRow` or a `Reading`."""
         if not self.writing:
+            _LOGGER.warning("attempt to write CSV data when file is unavailable")
             if self.auto_reopen:
                 self._open()
             else:
-                raise CSVWriterNotReady
+                raise CSVWriterNotReadyError
 
         if isinstance(entry, Reading):
             entry = _parse_reading(entry)
 
-        self.csv.writerow([entry.time.isoformat(), entry.value, entry.unit])
+        row = [entry.time.isoformat(), entry.value, entry.unit]
+        _LOGGER.debug("writing row to CSV file", extra={"row": row})
+        self.csv.writerow(row)
 
     def stop(self):
         """closes the file for writing and marks itself as finished."""
+        _LOGGER.debug("csv logging stopping: closing file")
         if self.writing:
             self.output.close()
             self.writing = False
