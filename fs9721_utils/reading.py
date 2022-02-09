@@ -54,7 +54,8 @@ class Unit(Enum):
     HERTZ = auto()
 
 
-def readable_unit(units: List[Unit], prefixes=True) -> str:
+def readable_unit(units: List[Unit], with_prefixes=True) -> str:
+    """returns a string representation of the reading's units - i.e. 'mV'."""
     parts = [None, None]
 
     unit_prefixes = {
@@ -67,33 +68,33 @@ def readable_unit(units: List[Unit], prefixes=True) -> str:
         Unit.FAHRENHEIGHT: 'F', Unit.CELSIUS: 'C', Unit.HERTZ: 'Hz'
     }
 
-    for u in units:
-        if prefixes and (u in unit_prefixes.keys()):
-            parts[0] = unit_prefixes[u]
+    for val in units:
+        prefix = unit_prefixes.get(val)
+        if with_prefixes and prefix:
+            parts[0] = prefix
             continue
 
-        if u in unit_symbols.keys():
-            parts[1] = unit_symbols[u]
+        symbol = unit_symbols.get(val)
+        if symbol:
+            parts[1] = symbol
             continue
-    
+
     return ''.join([p for p in parts if p])
 
 
 def readable_raw_value(units: List[Unit], val: float) -> float:
-    # This is a hack because floating point math -> the worst.
-    val = (val * 1000) # there's a max of 3 decimal places on the 4 digit display
-
+    """returns the raw value - i.e. a float in the _base_ unit. (i.e. V vs mV)"""
     unit_multiplier = {
         Unit.NANO: 0.1000000, Unit.MICRO: 0.100000, Unit.MILLI: 0.001,
         Unit.KILO: 1000, Unit.MEGA: 1000000
     }
 
-    for u in units:
-        if u in unit_multiplier.keys():
-            val *= unit_multiplier[u]
-            break
+    for unit in units:
+        multiplier = unit_multiplier.get(unit)
+        if multiplier:
+            return val * multiplier
 
-    return (val / 1000) # yep.
+    return val
 
 
 _PACKET_SPEC = OrderedDict()
@@ -208,7 +209,10 @@ class InvalidPacketError(Exception):
     """
 
 class NonNumericReadingError(Exception):
-    pass
+    """
+    NonNumericReadingError occurs when an attempt to read the current value
+    as a float is made, but the reading isn't valid - i.e. in the case of "L".
+    """
 
 class Reading:
     """
@@ -283,8 +287,9 @@ class Reading:
         """
         try:
             return float(self.display())
-        except ValueError:
-            raise NonNumericReadingError(f"{self.display()} is not a numeric reading - no suitable value")
+        except ValueError as value_err:
+            msg = f"{self.display()} is not a numeric reading - no suitable value"
+            raise NonNumericReadingError(msg) from value_err
 
     def units(self) -> List[Unit]:
         """Returns a List of `Unit` items associated with the payloads value."""
